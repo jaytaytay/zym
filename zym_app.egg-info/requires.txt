@@ -1,4 +1,0 @@
-flask
-pandas
-datetime
-flask_sqlalchemy
