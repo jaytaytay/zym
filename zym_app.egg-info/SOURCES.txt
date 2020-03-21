@@ -1,8 +1,0 @@
-README.md
-setup.py
-zym_app/__init__.py
-zym_app.egg-info/PKG-INFO
-zym_app.egg-info/SOURCES.txt
-zym_app.egg-info/dependency_links.txt
-zym_app.egg-info/requires.txt
-zym_app.egg-info/top_level.txt
