@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>ZYM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- <link rel="icon" href="data/logo/favicon.png" sizes="16x16" type="image/png"> -->
+    <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+<style>
+body {font-family: "Lato", sans-serif}
+.mySlides {display: none}
+
+/*.navbarimg {
+        width: 130px;
+        height: 195px;
+        position: relative;
+        display: inline-block;
+    }
+*/
+/*.navbarimg .img-top {
+        display: none;
+        position: absolute;
+        top: 12;
+        left: 24;
+        z-index: 99;
+    }*/
+/* .navbarimg:hover .img-top {
+        display: inline;
+    }*/
+
+/* .navbarimg:hover .img-bottom {
+	    width:0px;
+	    height:0px;
+    }*/
+
+</style>
+
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-black w3-card">
+    <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="/home" class="w3-bar-item w3-button w3-padding-large">  
+
+      <div class="navbarimg">
+        <img src="static/logo/navbar_logo_bottom.png" alt="ZYM" style="height:30px">
+      </div>
+    </a>
+    <div class="w3-dropdown-hover w3-hide-small">
+
+      <button class="w3-padding-large w3-button" title="test1">Test 1<i class="fa fa-caret-down"></i></button>     
+      <div class="w3-dropdown-content w3-bar-block w3-card-4">
+<!--         <a href="/soccer" class="w3-bar-item w3-button">Soccer Home</a>
+        <a href="/soccer/reality" class="w3-bar-item w3-button">Reality</a>
+        <a href="/soccer/fantasy" class="w3-bar-item w3-button">Fantasy</a> -->
+      </div>
+    </div>
+    <div class="w3-dropdown-hover w3-hide-small">
+      <button class="w3-padding-large w3-button" title="Test2">Test2 <i class="fa fa-caret-down"></i></button>     
+<!--       <div class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="/football/reality" class="w3-bar-item w3-button">Reality</a>
+        <a href="/football/fantasy" class="w3-bar-item w3-button">Fantasy</a> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navbar on small screens (remove the onclick attribute if you want the navbar to always show on top of the content when clicking on the links) -->
+<!-- <div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:46px">
+  <a href="/soccer" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">⚽️</a>
+  <a href="/football" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">🏉</a>
+</div> -->
+
+<!-- Page content -->
+<div class="container" style="max-width:2000px;margin-top:60px;width:80%">
+	{% with messages = get_flashed_messages(with_categories=True) %}
+
+		{% if messages %}
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }}">
+					{{ message }}
+				</div>
+			{% endfor %}		
+		{% endif %}
+
+	{% endwith %}
+
+	{% block content %}
+	{% endblock content %}
+</div>
+<!-- End Page Content -->
+
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+
+// When the user clicks anywhere outside of the modal, close it
+var modal = document.getElementById('ticketModal');
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+</script>
+
+ <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+
+</body>
+</html>

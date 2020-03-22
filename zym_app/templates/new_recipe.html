@@ -1,0 +1,143 @@
+{% extends "layouts.html" %}
+
+{% block content %}
+
+  <!-- Page content -->
+  <div style="max-width:2000px;margin-top:60px;width:80%">
+
+  	<div class="content-section">
+      <form method="POST" action="">
+        {{  form.hidden_tag() }}
+        <fieldset class="form-group">
+          <legend class=border-bottom mb-4">Add New Recipe</legend>
+          <div class="form-group"> 
+            {{ form.name.label(class="form-control-label") }}
+            {% if form.name.errors %}
+              {{ form.name(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.name.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.name(class="form-control form-control-lg") }}
+            {% endif %}
+
+          </div>
+          <div class="form-group"> 
+            {{ form.style.label(class="form-control-label") }}
+            {% if form.style.errors %}
+              {{ form.style(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.style.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.style(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+          <div class="form-group"> 
+            {{ form.abbreviation.label(class="form-control-label") }}
+            {% if form.abbreviation.errors %}
+              {{ form.abbreviation(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.abbreviation.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.abbreviation(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+          <div class="form-group"> 
+            {{ form.iteration.label(class="form-control-label") }}
+            {% if form.iteration.errors %}
+              {{ form.iteration(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.iteration.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.iteration(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+          <div class="form-group"> 
+            {{ form.iteration_of.label(class="form-control-label") }}
+            {% if form.iteration_of.errors %}
+              {{ form.iteration_of(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.iteration_of.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.iteration_of(class="form-control form-control-lg") }}
+            {% endif %}          
+          </div>
+          <div class="form-group"> 
+            {{ form.batch_size.label(class="form-control-label") }}
+            {% if form.batch_size.errors %}
+              {{ form.batch_size(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.batch_size.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.batch_size(class="form-control form-control-lg") }}
+            {% endif %} 
+          </div>
+          <div class="form-group"> 
+            {{ form.brewday_date.label(class="form-control-label") }}
+            {% if form.brewday_date.errors %}
+              {{ form.brewday_date(class="form-control form-control-lg is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.brewday_date.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.brewday_date(class="form-control form-control-lg") }}
+            {% endif %}
+            </div>
+          <div class="form-check"> 
+            <!-- {{ form.user_id.label(class="form-control-label") }} -->
+            {% if form.user_id.errors %}
+              <!-- {{ form.user_id(rows=2, multiple=False, class="form-control form-control-lg is-invalid") }} -->
+              {% for subfield in form.user_id %}
+                <td>
+                    <tr>{{ subfield(class="form-check-input is-invalid") }}</tr>
+                    <tr>{{ subfield.label(class="form-check-label") }}</tr><br>
+                </td>
+              {% endfor %}
+              <div class="invalid-feedback">
+                {% for error in form.user_id.errors%}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <!-- {{ form.user_id(rows=2, multiple=False, class="form-control form-control-lg") }} -->
+              {% for subfield in form.user_id %}
+                <td>
+                    <tr>{{ subfield(class="form-check-input") }}</tr>
+                    <tr>{{ subfield.label(class="form-check-label") }}</tr><br>
+                </td>
+              {% endfor %}
+            {% endif %}
+
+
+
+          </div>
+        </fieldset>
+        <div class="form-group"> 
+          {{ form.submit(class="btn btn-outline-info")  }}
+        </div>
+      </form>
+    </div>
+
+  <!-- End Page Content -->
+  </div>
+
+{% endblock content %}

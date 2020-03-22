@@ -6,16 +6,16 @@ ZYM_APP
 
 """
 
-
 # -----------------------------------------
 #     Import stuff
 # -----------------------------------------
 
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from forms import NewRecipe
 
 # import sqlite3
 import pandas as pd
@@ -34,7 +34,6 @@ sys.path.append(path)
 
 dirpath             = os.path.dirname(path)
 
-
 # -----------------------------------------
 #       initialise app
 # -----------------------------------------
@@ -43,6 +42,7 @@ app = Flask(__name__)
 # -----------------------------------------
 #       Database
 # -----------------------------------------
+app.config['SECRET_KEY'] = '51bc14061a7a9c248ac219d84493cebc'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 db = SQLAlchemy(app)
@@ -76,39 +76,6 @@ class Bevvy_list(db.Model):
 	def __repr__(self):
 		return f"Bevvy_list('{self.id}', '{self.name}')"
 
-# engine = create_engine('sqlite:///site.db', echo=True)
-# Session = sessionmaker(bind=engine)
-# session = Session()
-
-# def create_connection(db_file):
-#     """ create a database connection to the SQLite database
-#         specified by the db_file
-#     :param db_file: database file
-#     :return: Connection object or None
-#     """
-#     conn = None
-#     try:
-#         conn = sqlite3.connect(db_file)
-#     except Exception as e:
-#         print(e)
- 
-#     return conn
-
-# def select_all_tasks(conn):
-#     """
-#     Query all rows in the tasks table
-#     :param conn: the Connection object
-#     :return:
-#     """
-#     cur = conn.cursor()
-#     cur.execute("SELECT * FROM tasks")
- 
-#     rows = cur.fetchall()
- 
-#     for row in rows:
-#         print(row)
-
-# conn = create_connection(db)
 
 ##########################################
 #          Build app
@@ -127,18 +94,31 @@ def home():
 # could filter by owner (mark/liam)
 @app.route("/recipes")
 def recipes():
-
-	# collect data
-	# bevs_data = db.session.query(Bevvy_list).all()
-
 	bevs_data = Bevvy_list.query.all()
-
 	return render_template("recipes.html", bevs_data=bevs_data)
 
-# # Tab view for brew day, including timers
-# @app.route("/edit/<int:recipe_id>")
-# def edit():
-# 	return render_template("edit_recipe.html")
+# @app.route("/recipes")
+# def recipes():
+# 	users = User.query.all()
+# 	return render_template("recipes.html", users=users)
+
+# Tab view for brew day, including timers
+@app.route("/edit/<int:recipe_id>")
+def edit():
+	return render_template("edit_recipe.html")
+
+# add a new recipe
+@app.route("/newrecipe", methods=['GET', 'POST'])
+def new_recipe():
+	form = NewRecipe()
+	if form.validate_on_submit():
+		recipe = Bevvy_list(name=form.name.data, style=form.style.data, abbreviation=form.abbreviation.data, iteration=form.iteration.data, \
+			iteration_of=form.iteration_of.data, batch_size=form.batch_size.data, brewday_date=form.brewday_date.data, user_id=form.user_id.data)
+		db.session.add(recipe)
+		db.session.commit()
+		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
+		return redirect(url_for('home'))
+	return render_template("new_recipe.html", title="New Recipe", form=form)
 
 # # Tab view for various calculators
 # @app.route("/calculators")
