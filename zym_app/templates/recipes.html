@@ -3,8 +3,8 @@
 {% block content %}
 
   <!-- Page content -->
-  <div style="max-width:2000px;margin-top:46px;width:80%">
-
+<!--   <div style="max-width:2000px;margin-top:46px;width:80%">
+ -->
   	<table align="center">
   	         <tr>
   	            <td style="text-align:center"><h1>Recipes</h1></td>
@@ -14,17 +14,22 @@
   <!-- Recipe Table -->
 
   <table class="table table-striped table-hover">
-      <thead>
+      <thead class="thead-dark">
           <tr>
-            <td>Name</td>
-            <td>Style</td>
+            <th scope="col">Name</th>
+            <th scope="col">Style</th>
+            <th scope="col">Edit</th>
           </tr>
       </thead>
       {% for bevvy in bevs_data %}
           <tr>
-              <td>{{ bevvy.name|safe }}</td>
-              <td>{{ bevvy.style|safe }}</td>
-              <td><a href="/edit/">
+              <td>{{ bevvy.name }}</td>
+              <td>{{ bevvy.style }}</td>
+              <td>
+                <a href="{{ bevvy.url }}">
+                <img src="/static/icon_edit.png" alt="Edit" style="width:15px;height:15px;vertical-align:middle" align="middle">
+              </a>
+              </td>
           </tr>
       {% endfor %}
   </table>

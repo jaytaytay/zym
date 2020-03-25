@@ -11,5 +11,13 @@ class NewRecipe(FlaskForm):
 	batch_size 		= IntegerField('Batch Size', validators=[DataRequired()], render_kw={"placeholder": "in litres"})
 	brewday_date 	= DateField('Brewday Date', validators=[DataRequired()], render_kw={"placeholder": "YYYY-MM-DD"})
 	user_id			= RadioField('Brewer', choices=[('mark', 'Mark'), ('liam', 'Liam')])
-
 	submit 			= SubmitField('Submit')
+
+class NewBoilAddition(FlaskForm):
+	description 	= StringField('Description', validators=[DataRequired(), Length(min=3, max=100)])
+	time 			= IntegerField('Time', validators=[DataRequired()], render_kw={"placeholder": "min from flameout"})
+	brew_id 		= IntegerField('Brew ID', validators=[DataRequired()])
+	submit 			= SubmitField('Submit')
+
+class StartBoilTimer(FlaskForm):
+	submit 			= SubmitField('Start Timer')

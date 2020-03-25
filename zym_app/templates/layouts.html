@@ -6,11 +6,10 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!-- <link rel="icon" href="data/logo/favicon.png" sizes="16x16" type="image/png"> -->
+<link rel="icon" href="data/logo/favicon.png" sizes="16x16" type="image/png">
     <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
 
 <style>
 body {font-family: "Lato", sans-serif}
@@ -50,7 +49,7 @@ body {font-family: "Lato", sans-serif}
     <a href="/home" class="w3-bar-item w3-button w3-padding-large">  
 
       <div class="navbarimg">
-        <img src="static/logo/navbar_logo_bottom.png" alt="ZYM" style="height:30px">
+        <img src="/static/logo/navbar_logo_bottom.png" alt="ZYM" style="height:30px">
       </div>
     </a>
     <div class="w3-dropdown-hover w3-hide-small">
@@ -81,15 +80,17 @@ body {font-family: "Lato", sans-serif}
 <!-- Page content -->
 <div class="container" style="max-width:2000px;margin-top:60px;width:80%">
 	{% with messages = get_flashed_messages(with_categories=True) %}
-
-		{% if messages %}
-			{% for category, message in messages %}
-				<div class="alert alert-{{ category }}">
-					{{ message }}
-				</div>
-			{% endfor %}		
-		{% endif %}
-
+    {% for category, message in messages %}
+      {% if category != 'success_boil' %}
+    		{% if messages %}
+    			{% for category, message in messages %}
+    				<div class="alert alert-{{ category }}">
+    					{{ message }}
+    				</div>
+    			{% endfor %}		
+    		{% endif %}
+      {% endif %}
+    {% endfor %}
 	{% endwith %}
 
 	{% block content %}
