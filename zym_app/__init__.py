@@ -131,7 +131,7 @@ def edit(recipe_id):
 							end_datetime=None)
 		db.session.add(boil_addition)
 		db.session.commit()
-		flash(f'Boil Addition {form.description.data} successfully added 🔥', 'success_boil')
+		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
 		return redirect(url_for('edit', recipe_id=recipe_id))
 	
 	start_timer_form = StartBoilTimer()
@@ -166,7 +166,7 @@ def new_recipe():
 		href = "/edit/" + str(db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().id)
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
-		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
+		flash(f'Recipe for {form.name.data} successfully added', 'success')
 		return redirect(url_for('home'), _external=True)
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
