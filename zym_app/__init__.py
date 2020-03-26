@@ -163,13 +163,12 @@ def new_recipe():
 		recipe = Bevvy_list(name=form.name.data, style=form.style.data, abbreviation=form.abbreviation.data, iteration=form.iteration.data, \
 			iteration_of=form.iteration_of.data, batch_size=form.batch_size.data, brewday_date=form.brewday_date.data, user_id=form.user_id.data)
 		db.session.add(recipe)
-		print(db.session.query(Bevvy_list).first().id)
 		href = "/edit/" + str(db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().id)
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
 
-		return redirect(url_for('.home'))
+		return redirect(url_for('home'))
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
 # # Tab view for various calculators
@@ -183,4 +182,4 @@ def new_recipe():
 # 	return render_template("edit_recipe.html")
 
 if __name__ == "__main__":
-	app.run(host='0.0.0.0')
+	app.run()
