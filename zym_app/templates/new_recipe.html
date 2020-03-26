@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 {% extends "layouts.html" %}
 
 {% block content %}
@@ -21,13 +23,15 @@
               <th scope="col">Brewday Date</th>
             </tr>
           </thead>
-          {% for list in modal %}
-            <tr>
-            {% for item in list %}
-              <td>{{ item }}</td>
+          <tbody>
+            {% for list in modal %}
+              <tr>
+              {% for item in list %}
+                <td>{{ item }}</td>
+              {% endfor %}
+              </tr>
             {% endfor %}
-            </tr>
-          {% endfor %}
+          </tbody>
         </table>
       </div>
       <div class="modal-footer">
@@ -136,16 +140,16 @@
         {% else %}
           {{ form.brewday_date(class="form-control form-control-lg") }}
         {% endif %}
-        </div>
+      </div>
       <div class="form-check"> 
-        <!-- {{ form.user_id.label(class="form-control-label") }} -->
         {% if form.user_id.errors %}
-          <!-- {{ form.user_id(rows=2, multiple=False, class="form-control form-control-lg is-invalid") }} -->
           {% for subfield in form.user_id %}
+          <table>
             <td>
                 <tr>{{ subfield(class="form-check-input is-invalid") }}</tr>
                 <tr>{{ subfield.label(class="form-check-label") }}</tr><br>
             </td>
+          </table>
           {% endfor %}
           <div class="invalid-feedback">
             {% for error in form.user_id.errors%}
@@ -153,12 +157,13 @@
             {% endfor %}
           </div>
         {% else %}
-          <!-- {{ form.user_id(rows=2, multiple=False, class="form-control form-control-lg") }} -->
           {% for subfield in form.user_id %}
-            <td>
-                <tr>{{ subfield(class="form-check-input") }}</tr>
-                <tr>{{ subfield.label(class="form-check-label") }}</tr><br>
-            </td>
+            <table>
+              <td>
+                  <tr>{{ subfield(class="form-check-input") }}</tr>
+                  <tr>{{ subfield.label(class="form-check-label") }}</tr><br>
+              </td>
+            </table>
           {% endfor %}
         {% endif %}
       </div>
@@ -167,8 +172,6 @@
       {{ form.submit(class="btn btn-outline-info")  }}
     </div>
   </form>
-</div>
-
 </div>
 
 {% endblock content %}
