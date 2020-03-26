@@ -79,7 +79,7 @@ class Bevvy_list(db.Model):
 	boils 			= db.relationship('Boil', backref='bevvy', lazy=True)
 
 	def __repr__(self):
-		return f"Bevvy_list('{self.id}', '{self.name}', '{self.url}')"
+		return f"Bevvy_list('{self.id}', '{self.name}')"
 
 class Boil(db.Model):
 
