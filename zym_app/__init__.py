@@ -94,15 +94,18 @@ class Boil(db.Model):
 	def __repr__(self):
 		return f"Boil('{self.id}', '{self.description}', '{self.time}', '{self.end_datetime}')"
 
+# -----------------------------------------
+#       Functions
+# -----------------------------------------
+def max_value(inputlist):
+			return max([sublist[-1] for sublist in inputlist])
+
 ##########################################
 #          Build app
 ##########################################
 
 # home navigation
 @app.route("/")
-def index():
-	return render_template("home.html")
-
 @app.route("/home")
 def home():
 	return render_template("home.html")
@@ -131,8 +134,6 @@ def edit(recipe_id):
 	start_timer_form = StartBoilTimer()
 	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).all()
 	if start_timer_form.validate_on_submit():
-		def max_value(inputlist):
-			return max([sublist[-1] for sublist in inputlist])
 		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
 		for addition in boil_additions:
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
@@ -166,7 +167,7 @@ def new_recipe():
 		db.session.commit()
 
 		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
-		return redirect(url_for('home'))
+		return redirect(url_for('home', _external=True))
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
 # # Tab view for various calculators
