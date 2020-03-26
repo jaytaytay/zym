@@ -98,7 +98,7 @@ class Boil(db.Model):
 #       Functions
 # -----------------------------------------
 def max_value(inputlist):
-			return max([sublist[-1] for sublist in inputlist])
+	return max([sublist[-1] for sublist in inputlist])
 
 ##########################################
 #          Build app
@@ -162,12 +162,11 @@ def new_recipe():
 		db.session.add(recipe)
 		print(db.session.query(Bevvy_list).first().id)
 		href = "/edit/" + str(db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().id)
-		print(href)
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
-
 		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
-		return redirect(url_for('home', _external=True))
+
+		return redirect('home')
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
 # # Tab view for various calculators
