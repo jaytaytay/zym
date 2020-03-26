@@ -106,6 +106,9 @@ def max_value(inputlist):
 
 # home navigation
 @app.route("/")
+def index():
+	return render_template("home.html")
+
 @app.route("/home")
 def home():
 	return render_template("home.html")
@@ -166,7 +169,7 @@ def new_recipe():
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
 
-		return redirect('home')
+		return redirect(url_for('home'))
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
 # # Tab view for various calculators
