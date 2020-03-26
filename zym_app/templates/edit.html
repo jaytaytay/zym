@@ -421,6 +421,7 @@
   <br>lorem ipsum
 
 </div>
+
 <script>
 // Update the count down every 1 second
 
@@ -444,9 +445,6 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
     if (distance < 0) {
       clearInterval(timers[i]);
       document.getElementById(target_element).innerHTML = "EXPIRED";
-      // boil_timer_audio.play();
-      console.log(audio_tag);
-      // setTimeout(pauseBoilTimerAudio, 3000)
       $(audio_tag)[0].play();
     }
   }
@@ -459,16 +457,10 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
 </script>
 
 <script>
-  var boil_timer_audio = new Audio('/static/sounds/rising.wav');
   var timers = [];
   var end_times = [];
   var descriptions = [];
   var ids = [];
-  function pauseBoilTimerAudio(id) { 
-    boil_timer_audio.pause(); 
-    // clearInterval(timers.indexOf(id));
-  }
-
 </script>
 
 {% for item in boil_additions %}
@@ -487,7 +479,6 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
       timers[i] = setInterval(innerTimer, 1000, end_times[i], "timer_" + ids[i], i, "#audio_" + ids[i]);
     }
   }
-  console.log(timers);
 </script>
 
 
