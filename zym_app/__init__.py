@@ -173,7 +173,7 @@ def new_recipe():
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added', 'success')
-		return redirect(url_for("home"))p
+		return redirect(url_for("home"))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
