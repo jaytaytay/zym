@@ -15,6 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.declarative import declarative_base
 
 from forms import NewRecipe, NewBoilAddition, StartBoilTimer
 
@@ -52,7 +53,15 @@ db_path = os.path.join(os.path.dirname(__file__), 'site.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app) # I think this /makes/ the db. 
+db.init_app(app)
+db.create_all()
+# Session = sessionmaker()
+# engine = create_engine('sqlite:///site.db')
+# Session.configure(bind=engine)
+# session = Session()
+
+# Base = declarative_base()
 
 class User(db.Model):
 
