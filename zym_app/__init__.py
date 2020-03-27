@@ -10,7 +10,7 @@ ZYM_APP
 #     Import stuff
 # -----------------------------------------
 
-from flask import Flask, render_template, request, g, url_for, flash
+from flask import Flask, render_template, request, g, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
