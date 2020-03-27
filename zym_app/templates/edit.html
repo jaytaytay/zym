@@ -463,15 +463,15 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
   var ids = [];
 </script>
 
-<!-- {% for item in boil_additions %}
+{% for item in boil_additions %}
   build list of end times, and ids. 
   <script>
     end_times.push("{{ item.end_datetime }}");
     ids.push("{{ item.id }}");
   </script>
-{% endfor %} -->
+{% endfor %}
 
-<!-- once built, pass it to the javascript loop function to start timers.
+<!-- once built, pass it to the javascript loop function to start timers. -->
 
 <script>
   if (end_times.length > 0) {
@@ -479,7 +479,7 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
       timers[i] = setInterval(innerTimer, 1000, end_times[i], "timer_" + ids[i], i, "#audio_" + ids[i]);
     }
   }
-</script> -->
+</script>
 
 
 
