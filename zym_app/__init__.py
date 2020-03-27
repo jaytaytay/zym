@@ -10,7 +10,7 @@ ZYM_APP
 #     Import stuff
 # -----------------------------------------
 
-from flask import Flask, render_template, request, g, redirect, url_for, flash
+from flask import Flask, render_template, request, g, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -129,6 +129,10 @@ def recipes():
 @app.route("/edit/<int:recipe_id>", methods=['GET', 'POST'])
 def edit(recipe_id):
 	form = NewBoilAddition(brew_id=recipe_id)
+	start_timer_form = StartBoilTimer()
+	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).all()
+	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
+
 	if form.validate_on_submit():
 		boil_addition = Boil(description=form.description.data, \
 							time=form.time.data, \
@@ -139,17 +143,13 @@ def edit(recipe_id):
 		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
 		return redirect(url_for('edit', recipe_id=recipe_id))
 	
-	start_timer_form = StartBoilTimer()
-	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).all()
 	if start_timer_form.validate_on_submit():
 		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
 		for addition in boil_additions:
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
 			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime}) #+timedelta(minutes=addition.time)
-			db.session.commit()
+		db.session.commit()
 		return redirect(url_for('edit', recipe_id=recipe_id))
-
-	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
 		boil_additions=boil_additions, start_timer_form=start_timer_form)
@@ -159,11 +159,12 @@ def edit(recipe_id):
 def new_recipe():
 	form = NewRecipe()
 	recipe_list = Bevvy_list.query.all()
-	list_recipes =[]
+	list_recipes = []
+
 	for recipe in recipe_list:
 		row = [recipe.id, recipe.name, recipe.brewday_date.strftime("%-d %b %y")]
 		list_recipes.append(row)
-	# modal = pd.DataFrame(list_recipes)
+
 	if form.validate_on_submit():
 		recipe = Bevvy_list(name=form.name.data, style=form.style.data, abbreviation=form.abbreviation.data, iteration=form.iteration.data, \
 			iteration_of=form.iteration_of.data, batch_size=form.batch_size.data, brewday_date=form.brewday_date.data, user_id=form.user_id.data)
@@ -172,7 +173,7 @@ def new_recipe():
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added', 'success')
-		return redirect(url_for('home'), _external=True)
+		return redirect(url_for("home"))p
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
@@ -187,4 +188,4 @@ def new_recipe():
 # 	return render_template("edit_recipe.html")
 
 if __name__ == "__main__":
-	app.run()
+	app.run(host='0.0.0.0')
