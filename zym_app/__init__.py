@@ -46,7 +46,12 @@ gtts(app)
 #       Database
 # -----------------------------------------
 app.config['SECRET_KEY'] = '51bc14061a7a9c248ac219d84493cebc'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
+db_path = os.path.join(os.path.dirname(__file__), 'site.db')
+db_uri = 'sqlite:///{}'.format(db_path)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+
 
 db = SQLAlchemy(app)
 
