@@ -50,7 +50,7 @@ app.config['SECRET_KEY'] = '51bc14061a7a9c248ac219d84493cebc'
 
 db_path = os.path.join(os.path.dirname(__file__), 'site.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-print(db_path)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
