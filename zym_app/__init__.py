@@ -54,8 +54,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app) # I think this /makes/ the db. 
-db.init_app(app)
-db.create_all()
+# db.init_app(app)
+# db.create_all()
 # Session = sessionmaker()
 # engine = create_engine('sqlite:///site.db')
 # Session.configure(bind=engine)
@@ -142,22 +142,22 @@ def edit(recipe_id):
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
 	if form.validate_on_submit():
-		# boil_addition = Boil(description=form.description.data, \
-		# 					time=form.time.data, \
-		# 					brew_id=recipe_id,\
-		# 					end_datetime=None)
-		# db.session.add(boil_addition)
-		# db.session.commit()
-		# flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
-		return redirect(url_for('edit', recipe_id=recipe_id))
+		boil_addition = Boil(description=form.description.data, \
+							time=form.time.data, \
+							brew_id=recipe_id,\
+							end_datetime=None)
+		db.session.add(boil_addition)
+		db.session.commit()
+		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
+		# return redirect(url_for('edit', recipe_id=recipe_id))
 	
 	if start_timer_form.validate_on_submit():
-		# end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
-		# for addition in boil_additions:
-		# 	addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
-		# 	db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime}) #+timedelta(minutes=addition.time)
-		# db.session.commit()
-		return redirect(url_for('edit', recipe_id=recipe_id))
+		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
+		for addition in boil_additions:
+			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
+			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime})
+		db.session.commit()
+		# return redirect(url_for('edit', recipe_id=recipe_id))
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
 		boil_additions=boil_additions, start_timer_form=start_timer_form)
@@ -174,14 +174,14 @@ def new_recipe():
 		list_recipes.append(row)
 
 	if form.validate_on_submit():
-		# recipe = Bevvy_list(name=form.name.data, style=form.style.data, abbreviation=form.abbreviation.data, iteration=form.iteration.data, \
-		# 	iteration_of=form.iteration_of.data, batch_size=form.batch_size.data, brewday_date=form.brewday_date.data, user_id=form.user_id.data)
-		# db.session.add(recipe)
-		# href = "/edit/" + str(db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().id)
-		# db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
-		# db.session.commit()
-		# flash(f'Recipe for {form.name.data} successfully added', 'success')
-		return redirect(url_for('home'))
+		recipe = Bevvy_list(name=form.name.data, style=form.style.data, abbreviation=form.abbreviation.data, iteration=form.iteration.data, \
+			iteration_of=form.iteration_of.data, batch_size=form.batch_size.data, brewday_date=form.brewday_date.data, user_id=form.user_id.data)
+		db.session.add(recipe)
+		href = "/edit/" + str(db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().id)
+		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
+		db.session.commit()
+		flash(f'Recipe for {form.name.data} successfully added', 'success')
+		# return redirect(url_for('home'))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
