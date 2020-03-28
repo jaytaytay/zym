@@ -149,15 +149,15 @@ def edit(recipe_id):
 		db.session.add(boil_addition)
 		db.session.commit()
 		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
-		return redirect(url_for('edit', recipe_id=recipe_id))
+		# return redirect(url_for('edit', recipe_id=recipe_id))
 	
 	if start_timer_form.validate_on_submit():
-		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
+		end_all_timers = datetime.now() #+ timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
 		for addition in boil_additions:
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
 			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime}) #+timedelta(minutes=addition.time)
 		db.session.commit()
-		return redirect(url_for('edit', recipe_id=recipe_id))
+		# return redirect(url_for('edit', recipe_id=recipe_id))
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
 		boil_additions=boil_additions, start_timer_form=start_timer_form)
@@ -181,7 +181,7 @@ def new_recipe():
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added', 'success')
-		return redirect(url_for("home"))
+		# return redirect(url_for("home"))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
 
