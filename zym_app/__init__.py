@@ -141,7 +141,7 @@ def edit(recipe_id):
 	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).all()
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
-    if request.method == 'POST':
+	if request.method == 'POST':
 		if form.validate_on_submit():
 			boil_addition = Boil(description=form.description.data, \
 								time=form.time.data, \
@@ -173,8 +173,8 @@ def new_recipe():
 	for recipe in recipe_list:
 		row = [recipe.id, recipe.name, recipe.brewday_date.strftime("%-d %b %y")]
 		list_recipes.append(row)
-		
-    if request.method == 'POST':
+
+	if request.method == 'POST':
 		if form.validate_on_submit():
 			recipe = Bevvy_list(name=form.name.data, style=form.style.data, abbreviation=form.abbreviation.data, iteration=form.iteration.data, \
 				iteration_of=form.iteration_of.data, batch_size=form.batch_size.data, brewday_date=form.brewday_date.data, user_id=form.user_id.data)
