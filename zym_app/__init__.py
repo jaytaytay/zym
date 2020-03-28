@@ -139,6 +139,12 @@ def edit(recipe_id):
 	form = NewBoilAddition(brew_id=recipe_id)
 	start_timer_form = StartBoilTimer()
 	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).all()
+	df = pd.DataFrame([(d.time, d.description, d.end_datetime, d.id) for d in boil_additions], 
+                  columns=['time', 'description', 'end_datetime', 'id']).sort_values(by=['time'], ascending=False)
+	df['addition_group'] = df['time'].rank(ascending=False, method='dense')
+	df['addition_group_count'] = list(map(lambda x: df.groupby('addition_group').count().loc[x,'time'], df['addition_group']))
+	print(df)
+	# print()
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
 	if form.validate_on_submit():
@@ -149,7 +155,8 @@ def edit(recipe_id):
 		db.session.add(boil_addition)
 		db.session.commit()
 		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
-		# return redirect(url_for('/edit', recipe_id=recipe_id))
+		return redirect(url_for('/edit', recipe_id=recipe_id))
+
 	
 	if start_timer_form.validate_on_submit():
 		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
@@ -157,10 +164,11 @@ def edit(recipe_id):
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
 			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime})
 		db.session.commit()
+    
 		return redirect(url_for('/edit', recipe_id=recipe_id))
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
-		boil_additions=boil_additions, start_timer_form=start_timer_form)
+		boil_additions=boil_additions, start_timer_form=start_timer_form, boil_table=df)
 
 # add a new recipe
 @app.route("/newrecipe", methods=['GET', 'POST'])

@@ -226,18 +226,18 @@
             <th scope="col"></th>
           </tr>
       </thead>
-      {% for item in boil_additions %}
+      {% for key,value in boil_table.iterrows() %}
           <tr>
-            <td>{{ item.description }}</td>
-            <td>{{ item.time }}</td>
-            {% if item.end_datetime == None %}
+            <td>{{ value['description'] }}</td>
+            <td>{{ value['time'] }}</td>
+            {% if value['end_datetime'] == None %}
               <td>Timer not started</td>
               <td>Timer not started</td>
             {% else %}
-              <td>{{ item.end_datetime.strftime("%H:%M:%S") }}</td>   
-              <td><div id="timer_{{ item.id }}">tbc...</div></td>
-              <td><audio id="audio_{{ item.id }}" preload="auto" controls="false" 
-              src="{{ sayit(text=item.description)}}"></audio></td> 
+              <td>{{ value['end_datetime'].strftime("%H:%M:%S") }}</td>   
+              <td><div id="timer_{{ value['id'] }}">tbc...</div></td>
+              <td><audio id="audio_{{ value['id'] }}" preload="auto" controls="false" 
+              src="{{ sayit(text=value['description'])}}"></audio></td> 
             {% endif %}
           </tr>
       {% endfor %}
