@@ -165,7 +165,7 @@ def edit(recipe_id):
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
 			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime})
 		db.session.commit()
-    
+		print(url_for('edit', recipe_id=recipe_id))
 		return redirect(url_for('edit', recipe_id=recipe_id))
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
@@ -190,6 +190,7 @@ def new_recipe():
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added', 'success')
+		print(url_for('home'))
 		return redirect(url_for('home'))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)

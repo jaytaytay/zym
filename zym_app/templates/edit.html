@@ -234,7 +234,7 @@
               <td>Timer not started</td>
               <td>Timer not started</td>
             {% else %}
-              <!-- <td>{{ value['end_datetime'].strftime("%H:%M:%S") }}</td>    -->
+              <!-- <td>{{ value['end_datetime'] }}</td>    -->
               <td><div id="timer_{{ value['id'] }}">tbc...</div></td>
               <td><audio id="audio_{{ value['id'] }}" preload="auto" controls="false" 
               src="{{ sayit(text=value['description'])}}"></audio></td> 
