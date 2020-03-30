@@ -2,14 +2,49 @@
 
 {% block content %}
 
+
+
+
+
+
+
   <!-- Page content -->
-<!--   <div style="max-width:2000px;margin-top:46px;width:80%">
- -->
 <table align="center">
  <td>
     <th style="text-align:center"><h1>{{ recipe.name }}</h1></th>
  </td>
 </table>
+
+  <!-- Delete item Modal -->  
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Item</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        You are about to delete this item forever.<br>There is no going back.<br>Proceed with caution.<br>
+         <div>
+          <form method="POST" action="">
+            {{ remove_boil_addition_form.hidden_tag() }}
+            <fieldset class="form-group">
+              <legend class="border-bottom mb-4">Delete item from Boil</legend>
+              {{ remove_boil_addition_form.item_id(class="custom-select") }}
+            </fieldset>
+            <div class="form-group">
+              {{ remove_boil_addition_form.submit_3(class="btn btn-danger") }}
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
   	
   <!-- Recipe Table -->
 
@@ -57,8 +92,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -72,7 +105,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -86,7 +118,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -100,7 +131,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -114,7 +144,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -128,7 +157,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -142,7 +170,13 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
+  <br>lorem ipsum
+  <br>lorem ipsum
+  <br>lorem ipsum
+  <br>lorem ipsum
+  <br>lorem ipsum
+  <br>lorem ipsum
+  <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -159,11 +193,12 @@
 </div>
 <div class="p-3 mb-2 bg-primary text-white text-center" style="position:sticky;top:60px;"><h2>Brewing</h2></div>
 
-<div class="p-3 mb-2 bg-secondary text-white text-center" style="position:sticky;top:140px;"><h3>Boil</h3></div>
+<div class="p-3 mb-2 bg-secondary text-white text-center" style="position:sticky;top:140px;" id="boil_scroll">
+  <h3>Boil</h3></div>
 <!-- <div class="boil_scroll"> -->
 <!-- Flash message for successful boil addition -->
 
-<div id="boil_addition_scroll">
+<div>
 {% with messages = get_flashed_messages(category_filter=['success_boil']) %}
 
   {% if messages %}
@@ -211,7 +246,7 @@
       </div>
     </fieldset>
     <div class="form-group"> 
-      {{ form.submit(class="btn btn-outline-info") }}
+      {{ form.submit_1(class="btn btn-outline-info") }}
     </div>
   </form>
 </div>
@@ -219,25 +254,26 @@
 <table class="table table-striped table-hover">
       <thead class="thead-dark">
           <tr>
-            <th scope="col">Description</th>
             <th scope="col">Time (min)</th>
+            <th scope="col">Description</th>
             <th scope="col">End Time</th>            
             <th scope="col">Countdown Timer</th>
-            <th scope="col"></th>
+            <th scope="col">Audio</th>
           </tr>
       </thead>
       {% for key,value in boil_table.iterrows() %}
           <tr>
+            {% if value['addition_group_ranking'] == 1 %}
+              <td rowspan="{{ value['addition_group_count'] }}">{{ value['time'] }}</td>
+            {% endif %}
             <td>{{ value['description'] }}</td>
-            <td>{{ value['time'] }}</td>
-            {% if value['end_datetime'] == None %}
-              <td>Timer not started</td>
-              <td>Timer not started</td>
-            {% else %}
-              <!-- <td>{{ value['end_datetime'] }}</td>    -->
+            {% if value['end_datetime'] == value['end_datetime'] %}
+              <td>{{ value['end_datetime'].strftime("%H:%M:%S") }}</td>   
               <td><div id="timer_{{ value['id'] }}">tbc...</div></td>
               <td><audio id="audio_{{ value['id'] }}" preload="auto" controls="false" 
-              src="{{ sayit(text=value['description'])}}"></audio></td> 
+              src="{{ sayit(text=value['say_it'])}}"></audio></td> 
+            {% else %}
+              <td colspan="3">Timer not started</td>
             {% endif %}
           </tr>
       {% endfor %}
@@ -246,12 +282,18 @@
   <!-- include button to start timer -->
 <div>
   <form method="POST" action="">
-    {{  start_timer_form.hidden_tag() }}
     <div class="form-group"> 
-      {{ start_timer_form.submit(class="btn btn-outline-info") }}
+      {{ start_timer_form.hidden_tag() }}
+    </div>
+    <div class="form-group"> 
+      {{ start_timer_form.submit_2(class="btn btn-outline-info") }}
     </div>
   </form>
 </div>
+
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalLong">
+          Delete item
+        </button>
 
 <div>
   <br>lorem ipsum
@@ -320,8 +362,6 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
@@ -335,97 +375,14 @@
   <br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-<br>lorem ipsum
   <br>lorem ipsum
   <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-<br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-<br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-<br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-<br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-<br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-  <br>lorem ipsum
-
 </div>
 
 <script>
 // Update the count down every 1 second
 
-function innerTimer(countDownDate, target_element, i, audio_tag) {
+function innerTimer(countDownDate, target_element, i, audio_tag, sayit) {
 
     // Get today's date and time
     var now = new Date().getTime();
@@ -445,7 +402,9 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
     if (distance < 0) {
       clearInterval(timers[i]);
       document.getElementById(target_element).innerHTML = "EXPIRED";
-      $(audio_tag)[0].play();
+      if (sayit) {
+        $(audio_tag)[0].play();  
+      }
     }
   }
 
@@ -459,39 +418,64 @@ function innerTimer(countDownDate, target_element, i, audio_tag) {
 <script>
   var timers = [];
   var end_times = [];
-  var descriptions = [];
+  // var descriptions = [];
   var ids = [];
+  var sayit = [];
 </script>
 
-{% for item in boil_additions %}
-  build list of end times, and ids. 
-  <script>
-    end_times.push("{{ item.end_datetime }}");
-    ids.push("{{ item.id }}");
-  </script>
+{% for key,value in boil_table.iterrows() %}
+  {% if value['end_datetime'] != None %}
+    <script>
+      end_times.push("{{ value['end_datetime'] }}");
+      ids.push("{{ value['id'] }}");
+    </script>
+    {% if value['addition_group_ranking'] == 1 %}
+      <script>
+        sayit.push(true);
+      </script>
+    {% else %}
+    <script>  
+      sayit.push(false);
+    </script>
+    {% endif %}
+  {% endif %}
 {% endfor %}
 
 <!-- once built, pass it to the javascript loop function to start timers. -->
-
 <script>
   if (end_times.length > 0) {
     for (var i=0;i < end_times.length; ++i) {
-      timers[i] = setInterval(innerTimer, 1000, end_times[i], "timer_" + ids[i], i, "#audio_" + ids[i]);
+      timers[i] = setInterval(innerTimer, 1000, end_times[i], "timer_" + ids[i], i, "#audio_" + ids[i], sayit[i]);
     }
   }
 </script>
 
+{% if scroll is not none %}
+<script type="application/javascript">
+// document.getElementById("{{ scroll }}").scrollIntoView({behavior: 'smooth'}).scrollTop += 50;
+// console.log("Hello world!");
+// var elmnt = document.getElementById(scroll);
+// elmnt.scrollIntoView();
 
+// window.scroll(0,findPos(document.getElementById("boil_scroll")));
 
+// const y = document.getElementById("boil_scroll").getBoundingClientRect().top + window.scrollY;
+// window.scroll({
+//   top: y,
+//   behavior: 'smooth'
+// });
 
-<!-- 
-{% if scroll %}
-<script>
-    // document.getElementById('{{ scroll }}').scrollIntoView();
-var elmnt = document.getElementById(scroll);
-elmnt.scrollIntoView();
+// var scrollDiv = document.getElementById(boil_scroll).offsetTop;
+// window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
+
+const id = "{{ scroll }}";
+const yOffset = -138; 
+const element = document.getElementById(id);
+const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+window.scrollTo({top: y, behavior: 'smooth'});
 
 </script>
-{% endif %} -->
+{% endif %}
 
 {% endblock content %}
