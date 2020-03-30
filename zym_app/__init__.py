@@ -140,7 +140,9 @@ def edit(recipe_id, scroll=None):
 	df['addition_group_ranking'] = df.groupby(['addition_group','addition_group_count']).cumcount()+1
 	df['say_it'] = df['time'].astype(str) + " minute addition"
 	df.loc[df[df.addition_group_count == 1].index,'say_it'] = df.loc[df[df.addition_group_count == 1].index,'description']
-	
+	df['datetime_string'] = df.end_datetime.map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
+	print(df)
+
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
 	if form.validate_on_submit():

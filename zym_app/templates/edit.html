@@ -268,7 +268,7 @@
             {% endif %}
             <td>{{ value['description'] }}</td>
             {% if value['end_datetime'] == value['end_datetime'] %}
-              <td>{{ value['end_datetime'].strftime("%H:%M:%S") }}</td>   
+              <td>{{ value['datetime_string'] }}</td>   
               <td><div id="timer_{{ value['id'] }}">tbc...</div></td>
               <td><audio id="audio_{{ value['id'] }}" preload="auto" controls="false" 
               src="{{ sayit(text=value['say_it'])}}"></audio></td> 
