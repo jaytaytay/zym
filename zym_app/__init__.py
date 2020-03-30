@@ -50,10 +50,6 @@ gtts(app)
 app.config['SECRET_KEY'] = '51bc14061a7a9c248ac219d84493cebc'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
-# db_path = os.path.join(os.path.dirname(__file__), 'site.db')
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -152,7 +148,7 @@ def edit(recipe_id, scroll=None):
 							end_datetime=None)
 		db.session.add(boil_addition)
 		db.session.commit()
-		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
+		flash(f'Boil Addition {form.description.data} successfully added 🔥', 'success_boil')
 		return redirect(url_for('edit', recipe_id=recipe_id, scroll="boil_scroll"))
 
 	if start_timer_form.validate_on_submit():
@@ -198,7 +194,7 @@ def new_recipe():
 		href = "/edit/" + str(db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().id)
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
-		flash(f'Recipe for {form.name.data} successfully added', 'success')
+		flash(f'Recipe for {form.name.data} successfully added 🍻', 'success')
 		return redirect(url_for('home'))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)

@@ -2,12 +2,6 @@
 
 {% block content %}
 
-
-
-
-
-
-
   <!-- Page content -->
 <table align="center">
  <td>
@@ -198,7 +192,7 @@
 <!-- <div class="boil_scroll"> -->
 <!-- Flash message for successful boil addition -->
 
-<div>
+<div id="flash_message_fadeout">
 {% with messages = get_flashed_messages(category_filter=['success_boil']) %}
 
   {% if messages %}
@@ -407,12 +401,15 @@ function innerTimer(countDownDate, target_element, i, audio_tag, sayit) {
       }
     }
   }
+</script>
 
-// // function to clear flash messages after certain time.
-// setTimeout(function() {
-//     $('.flash_message_fadeout').fadeOut('fast');
-// }, 3000); // <-- time in milliseconds
-
+<script>
+// jquery function to clear flash messages after certain time.
+$(function() {
+   $('#flash_message_fadeout').delay(500).fadeIn('normal', function() {
+      $(this).delay(2500).fadeOut();
+   });
+});
 </script>
 
 <script>
@@ -452,21 +449,6 @@ function innerTimer(countDownDate, target_element, i, audio_tag, sayit) {
 
 {% if scroll is not none %}
 <script type="application/javascript">
-// document.getElementById("{{ scroll }}").scrollIntoView({behavior: 'smooth'}).scrollTop += 50;
-// console.log("Hello world!");
-// var elmnt = document.getElementById(scroll);
-// elmnt.scrollIntoView();
-
-// window.scroll(0,findPos(document.getElementById("boil_scroll")));
-
-// const y = document.getElementById("boil_scroll").getBoundingClientRect().top + window.scrollY;
-// window.scroll({
-//   top: y,
-//   behavior: 'smooth'
-// });
-
-// var scrollDiv = document.getElementById(boil_scroll).offsetTop;
-// window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
 
 const id = "{{ scroll }}";
 const yOffset = -138; 
