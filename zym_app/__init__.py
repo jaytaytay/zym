@@ -17,10 +17,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
 
-from forms import NewRecipe, NewBoilAddition, StartBoilTimer
+from forms import NewRecipe, NewBoilAddition, StartBoilTimer, RemoveBoilAddition
 
 # import sqlite3
 import pandas as pd
+import numpy as np
 import json
 import sys
 import os
@@ -35,7 +36,6 @@ from flask_gtts import gtts
 # -----------------------------------------
 path                = os.getcwd()
 sys.path.append(path)
-
 dirpath             = os.path.dirname(path)
 
 # -----------------------------------------
@@ -43,26 +43,18 @@ dirpath             = os.path.dirname(path)
 # -----------------------------------------
 app = Flask(__name__)
 gtts(app)
+
 # -----------------------------------------
 #       Database
 # -----------------------------------------
 app.config['SECRET_KEY'] = '51bc14061a7a9c248ac219d84493cebc'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
-db_path = os.path.join(os.path.dirname(__file__), 'site.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SERVER_NAME'] = 'quarkbrewing.com'
+# db_path = os.path.join(os.path.dirname(__file__), 'site.db')
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app) # I think this /makes/ the db. 
-# db.init_app(app)
-# db.create_all()
-# Session = sessionmaker()
-# engine = create_engine('sqlite:///site.db')
-# Session.configure(bind=engine)
-# session = Session()
-
-# Base = declarative_base()
+db = SQLAlchemy(app)
 
 class User(db.Model):
 
@@ -136,16 +128,19 @@ def recipes():
 
 # Tab view for brew day, including timers
 @app.route("/edit/<int:recipe_id>", methods=['GET', 'POST'])
-def edit(recipe_id):
-	form = NewBoilAddition(brew_id=recipe_id)
-	start_timer_form = StartBoilTimer()
-	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).all()
+@app.route("/edit/<int:recipe_id>/<string:scroll>", methods=['GET', 'POST'])
+def edit(recipe_id, scroll=None):
+	form = NewBoilAddition(brew_id=recipe_id, prefix='a')
+	start_timer_form = StartBoilTimer(prefix='b')
+	boil_additions = Boil.query.filter(Boil.brew_id == recipe_id).order_by(Boil.time.desc()).all()
 	df = pd.DataFrame([(d.time, d.description, d.end_datetime, d.id) for d in boil_additions], 
                   columns=['time', 'description', 'end_datetime', 'id']).sort_values(by=['time'], ascending=False)
 	df['addition_group'] = df['time'].rank(ascending=False, method='dense')
 	df['addition_group_count'] = list(map(lambda x: df.groupby('addition_group').count().loc[x,'time'], df['addition_group']))
-	# print(df)
-	# print()
+	df['addition_group_ranking'] = df.groupby(['addition_group','addition_group_count']).cumcount()+1
+	df['say_it'] = df['time'].astype(str) + " minute addition"
+	df.loc[df[df.addition_group_count == 1].index,'say_it'] = df.loc[df[df.addition_group_count == 1].index,'description']
+	
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
 	if form.validate_on_submit():
@@ -156,20 +151,32 @@ def edit(recipe_id):
 		db.session.add(boil_addition)
 		db.session.commit()
 		flash(f'Boil Addition {form.description.data} successfully added', 'success_boil')
-		return redirect(url_for('edit', recipe_id=recipe_id))
+		return redirect(url_for('edit', recipe_id=recipe_id, scroll="boil_scroll"))
 
-	
 	if start_timer_form.validate_on_submit():
 		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
 		for addition in boil_additions:
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
 			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime})
 		db.session.commit()
-		print(url_for('edit', recipe_id=recipe_id))
-		return redirect(url_for('edit', recipe_id=recipe_id))
+		return redirect(url_for('edit', recipe_id=recipe_id, scroll="boil_scroll"))
+
+	remove_boil_addition_form = RemoveBoilAddition(prefix='c')
+	remove_boil_addition_form.item_id.choices = [(i.id, str(i.time) + " min: " + i.description) for i in boil_additions]
+	# remove_boil_addition_form.process()
+	if remove_boil_addition_form.validate_on_submit():
+		deleted_item = Boil.query.filter(Boil.id == remove_boil_addition_form.item_id.data).first()
+		db.session.delete(deleted_item)
+		db.session.commit()
+		# print(Boil.query.filter(Boil.id == remove_boil_addition_form.item_id.data).first())
+		flash(f'Boil Addition {str(deleted_item.time)} min: {deleted_item.description} successfully deleted ❌', 'success_boil')
+		return redirect(url_for('edit', recipe_id=recipe_id, scroll="boil_scroll"))
+	# print(remove_boil_addition_form.errors)
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
-		boil_additions=boil_additions, start_timer_form=start_timer_form, boil_table=df)
+		boil_additions=boil_additions, start_timer_form=start_timer_form, \
+		remove_boil_addition_form=remove_boil_addition_form, \
+		boil_table=df, scroll=scroll)
 
 # add a new recipe
 @app.route("/newrecipe", methods=['GET', 'POST'])
@@ -190,7 +197,6 @@ def new_recipe():
 		db.session.query(Bevvy_list).order_by(Bevvy_list.id.desc()).first().url = href
 		db.session.commit()
 		flash(f'Recipe for {form.name.data} successfully added', 'success')
-		print(url_for('home'))
 		return redirect(url_for('home'))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)

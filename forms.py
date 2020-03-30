@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, RadioField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, IntegerField, DateField, SubmitField, SelectField, RadioField
+from wtforms.validators import DataRequired, InputRequired, Length
 
 class NewRecipe(FlaskForm):
 	name 			= StringField('Name', validators=[DataRequired(), Length(min=3, max=100)])
@@ -15,9 +15,14 @@ class NewRecipe(FlaskForm):
 
 class NewBoilAddition(FlaskForm):
 	description 	= StringField('Description', validators=[DataRequired(), Length(min=3, max=100)])
-	time 			= IntegerField('Time', validators=[DataRequired()], render_kw={"placeholder": "min from flameout"})
+	time 			= IntegerField('Time', validators=[InputRequired()], render_kw={"placeholder": "min from flameout"})
 	brew_id 		= IntegerField('Brew ID', validators=[DataRequired()])
-	submit 			= SubmitField('Submit')
+	submit_1		= SubmitField('Submit')
 
 class StartBoilTimer(FlaskForm):
-	submit 			= SubmitField('Start Timer')
+	submit_2 			= SubmitField('Start Timer')
+
+class RemoveBoilAddition(FlaskForm):
+	item_id 		= SelectField('Item ID', coerce=int, validators=[DataRequired()])
+	submit_3		= SubmitField('Delete Forever')
+
