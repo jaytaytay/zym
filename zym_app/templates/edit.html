@@ -428,7 +428,13 @@ $(function() {
     </script>
     {% if value['addition_group_ranking'] == 1 %}
       <script>
-        sayit.push(true);
+        var now = new Date().getTime();
+        var end = new Date("{{ value['end_datetime'] }}").getTime();
+        if (end > now) {
+          sayit.push(true);
+        } else {
+            sayit.push(false);
+        }
       </script>
     {% else %}
     <script>  
