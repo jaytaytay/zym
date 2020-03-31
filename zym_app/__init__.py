@@ -136,8 +136,8 @@ def edit(recipe_id, scroll=None):
 	df['addition_group_ranking'] = df.groupby(['addition_group','addition_group_count']).cumcount()+1
 	df['say_it'] = df['time'].astype(str) + " minute addition"
 	df.loc[df[df.addition_group_count == 1].index,'say_it'] = df.loc[df[df.addition_group_count == 1].index,'description']
-	df['datetime_string'] = pd.to_datetime(df.end_datetime) + timedelta(hours=8)
-	df['datetime_string'] = df.datetime_string.map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
+	df['end_datetime'] = pd.to_datetime(df.end_datetime) + timedelta(hours=8)
+	df['datetime_string'] = df.end_datetime.map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
 
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
@@ -155,6 +155,7 @@ def edit(recipe_id, scroll=None):
 		end_all_timers = datetime.now() + timedelta(minutes=max_value(Boil.query.filter(Boil.brew_id == recipe_id).with_entities(Boil.time).all()))
 		for addition in boil_additions:
 			addition_end_datetime = end_all_timers - timedelta(minutes=addition.time)
+			print(addition_end_datetime)
 			db.session.query(Boil).filter(Boil.id == addition.id).update({'end_datetime':addition_end_datetime})
 		db.session.commit()
 		return redirect(url_for('edit', recipe_id=recipe_id, scroll="boil_scroll"))
