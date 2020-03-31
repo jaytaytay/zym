@@ -137,7 +137,8 @@ def edit(recipe_id, scroll=None):
 	df['say_it'] = df['time'].astype(str) + " minute addition"
 	df.loc[df[df.addition_group_count == 1].index,'say_it'] = df.loc[df[df.addition_group_count == 1].index,'description']
 	df.end_datetime = pd.to_datetime(df.end_datetime)
-	df['datetime_string'] = df.end_datetime.dt.tz_localize(tz='Australia/Perth').map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
+	df['datetime_string'] = df.end_datetime + timedelta(hours=8)
+	df['datetime_string'] = df.datetime_string.map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
 
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
