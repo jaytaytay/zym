@@ -136,8 +136,8 @@ def edit(recipe_id, scroll=None):
 	df['addition_group_ranking'] = df.groupby(['addition_group','addition_group_count']).cumcount()+1
 	df['say_it'] = df['time'].astype(str) + " minute addition"
 	df.loc[df[df.addition_group_count == 1].index,'say_it'] = df.loc[df[df.addition_group_count == 1].index,'description']
-	df['datetime_string'] = df.end_datetime.map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
-	print(df)
+	df.end_datetime = pd.to_datetime(df.end_datetime)
+	df['datetime_string'] = df.end_datetime.dt.tz_localize(tz='Australia/Perth').map(lambda x: x.strftime("%H:%M:%S") if pd.notnull(x) else ' - ')
 
 	recipe = Bevvy_list.query.filter(Bevvy_list.id == recipe_id).all() # could put check to ensure only one item is returned in this list. SHouldn't be any duplicate IDs
 
@@ -161,15 +161,14 @@ def edit(recipe_id, scroll=None):
 
 	remove_boil_addition_form = RemoveBoilAddition(prefix='c')
 	remove_boil_addition_form.item_id.choices = [(i.id, str(i.time) + " min: " + i.description) for i in boil_additions]
-	# remove_boil_addition_form.process()
+
 	if remove_boil_addition_form.validate_on_submit():
 		deleted_item = Boil.query.filter(Boil.id == remove_boil_addition_form.item_id.data).first()
 		db.session.delete(deleted_item)
 		db.session.commit()
-		# print(Boil.query.filter(Boil.id == remove_boil_addition_form.item_id.data).first())
 		flash(f'Boil Addition {str(deleted_item.time)} min: {deleted_item.description} successfully deleted ❌', 'success_boil')
 		return redirect(url_for('edit', recipe_id=recipe_id, scroll="boil_scroll"))
-	# print(remove_boil_addition_form.errors)
+
 
 	return render_template("edit.html", recipe=recipe[0], form=form, \
 		boil_additions=boil_additions, start_timer_form=start_timer_form, \
