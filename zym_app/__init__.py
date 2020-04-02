@@ -17,7 +17,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
 
-from forms import NewRecipe, NewBoilAddition, StartBoilTimer, RemoveBoilAddition
+from forms import NewRecipe, NewBoilAddition, StartBoilTimer, RemoveBoilAddition, NewTimer
 
 # import sqlite3
 import pandas as pd
@@ -95,6 +95,14 @@ class Boil(db.Model):
 
 	def __repr__(self):
 		return f"Boil('{self.id}', '{self.description}', '{self.time}', '{self.end_datetime}')"
+
+class Timer(db.Model):
+
+	__tablename__ = 'timers'
+
+	id 				= db.Column(db.Integer, primary_key=True)
+	description		= db.Column(db.String(100), unique=False, nullable=True)
+	end_datetime 	= db.Column(db.DateTime, unique=False, nullable=True)
 
 # -----------------------------------------
 #       Functions
@@ -198,6 +206,32 @@ def new_recipe():
 		return redirect(url_for('home'))
 
 	return render_template("new_recipe.html", title="New Recipe", form=form, modal=list_recipes)
+
+# Tab view for various calculators
+@app.route("/timers", methods=['GET'])
+def timers():
+	timers = Timer.query.all()
+	df = pd.DataFrame([(d.id, d.description, d.end_datetime) for d in timers], 
+                  columns=['id', 'description', 'end_datetime'])
+
+	return render_template("timers.html", df_timers=df)
+
+@app.route("/edit_timer/<int:timer_id>", methods=['GET', 'POST'])
+def edit_timer(timer_id):
+	form = NewTimer()
+	if form.validate_on_submit():
+		end = datetime.now() + timedelta(minutes=form.time.data)
+		timer = Timer(id= timer_id,\
+						description= form.description.data,\
+						end_datetime=end)
+		db.session.query(Timer).filter(Timer.id == timer.id).update({'end_datetime':timer.end_datetime,'description':timer.description})
+		db.session.commit()
+
+		flash(f'Timer for {form.description.data} successfully updated', 'success_timer')
+		return redirect(url_for('timers'))
+
+	return render_template("edit_timer.html", form=form)
+
 
 # # Tab view for various calculators
 # @app.route("/calculators")
