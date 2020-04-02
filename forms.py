@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, DateField, SubmitField, SelectField, RadioField, TimeField
 from wtforms.validators import DataRequired, InputRequired, Length
 
-class NewRecipe(FlaskForm):m
+class NewRecipe(FlaskForm):
 	name 			= StringField('Name', validators=[DataRequired(), Length(min=3, max=100)])
 	style 			= StringField('Style', validators=[DataRequired(), Length(min=3, max=60)])
 	abbreviation 	= StringField('Abbreviation', validators=[DataRequired(), Length(min=3, max=60)])
