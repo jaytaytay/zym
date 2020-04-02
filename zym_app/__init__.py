@@ -220,7 +220,7 @@ def timers():
 def edit_timer(timer_id):
 	form = NewTimer()
 	if form.validate_on_submit():
-		end = datetime.now() + timedelta(minutes=form.time.data)
+		end = datetime.now() + timedelta(minutes=form.time.data) + timedelta(hours=8)
 		timer = Timer(id= timer_id,\
 						description= form.description.data,\
 						end_datetime=end)
