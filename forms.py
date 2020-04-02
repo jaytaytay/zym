@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField, SubmitField, SelectField, RadioField
+from wtforms import StringField, IntegerField, DateField, SubmitField, SelectField, RadioField, TimeField
 from wtforms.validators import DataRequired, InputRequired, Length
 
-class NewRecipe(FlaskForm):
+class NewRecipe(FlaskForm):m
 	name 			= StringField('Name', validators=[DataRequired(), Length(min=3, max=100)])
 	style 			= StringField('Style', validators=[DataRequired(), Length(min=3, max=60)])
 	abbreviation 	= StringField('Abbreviation', validators=[DataRequired(), Length(min=3, max=60)])
@@ -20,9 +20,14 @@ class NewBoilAddition(FlaskForm):
 	submit_1		= SubmitField('Submit')
 
 class StartBoilTimer(FlaskForm):
-	submit_2 			= SubmitField('Start Timer')
+	submit_2 		= SubmitField('Start Timer')
 
 class RemoveBoilAddition(FlaskForm):
 	item_id 		= SelectField('Item ID', coerce=int, validators=[DataRequired()])
 	submit_3		= SubmitField('Delete Forever')
 
+class NewTimer(FlaskForm):
+	submit 			= SubmitField('Submit')
+	description 	= StringField('Description', validators=[DataRequired(), Length(min=3, max=100)], render_kw={"placeholder": "100 characters max"})
+	time 			= IntegerField('Time', validators=[InputRequired()], render_kw={"placeholder": "in minutes"})
+	timer_id	 	= IntegerField('Timer ID', render_kw={"placeholder": "Enter ID Number of Timer"})

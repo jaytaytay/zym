@@ -1,0 +1,140 @@
+{% extends "layouts.html" %}
+
+{% block content %}
+
+  <!-- Page content -->
+<table align="center">
+ <td>
+    <th style="text-align:center"><h1>Timers</h1></th>
+ </td>
+</table>
+
+<!-- Flash message for successful boil addition -->
+<div id="flash_message_fadeout">
+{% with messages = get_flashed_messages(category_filter=['success_timer']) %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">
+        {{ message }}
+      </div>
+    {% endfor %}    
+  {% endif %}
+{% endwith %}
+</div>
+
+<table class="table" style="table-layout:auto;">
+  <tbody>
+    <tr>
+      {% for key,value in df_timers.iterrows() %}
+        <td style="width:500px;word-wrap:break-word">
+          <div>
+            <div><h2>Timer #{{ value['id'] }}</h2></div>
+            <table>
+              <td rowspan="2">
+                <div style="word-wrap:break-word" class="primary">{{ value['description'] }}</div>
+                <div id="timer_{{ value['id'] }}">This inner html will be overwritten with timer countdown</div>
+              </td>
+              <td>
+                <button type="button" class="btn btn-primary" onclick="window.location.href = '/edit_timer/{{ value['id'] }}';">Edit</button>
+              </td>  
+            </table>
+            <audio id="audio_{{ value['id'] }}" preload="auto" controls="false" src="{{ sayit(text=value['description'])}}"></audio>
+
+          </div>
+        </td>
+        {% if value['id'] % 4 == 0 %}
+          </tr>
+          <tr>
+        {% endif %}
+    {% endfor %}
+    </tr>
+  </tbody>
+</table>
+
+<script>
+// Update the count down every 1 second
+
+function innerTimer(countDownDate, target_element, i, audio_tag, sayit) {
+
+    // Get today's date and time
+    var now = new Date().getTime();
+    var end = new Date(countDownDate).getTime();
+    // Find the distance between now and the count down date
+    var distance = end - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the result in the element with id="demo"
+    document.getElementById(target_element).innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text
+    if (distance < 0) {
+      clearInterval(timers[i]);
+      document.getElementById(target_element).innerHTML = "EXPIRED";
+      if (sayit) {
+        $(audio_tag)[0].play();  
+      }
+    }
+  }
+</script>
+
+<script>
+// jquery function to clear flash messages after certain time.
+$(function() {
+   $('#flash_message_fadeout').delay(500).fadeIn('normal', function() {
+      $(this).delay(2500).fadeOut();
+   });
+});
+</script>
+
+<script>
+  var timers = [];
+  var end_times = [];
+  var ids = [];
+  var sayit = [];
+</script>
+
+{% for key,value in df_timers.iterrows() %}
+  {% if value['end_datetime'] != None %}
+    <script>
+      end_times.push("{{ value['end_datetime'] }}");
+      ids.push("{{ value['id'] }}");
+    </script>
+    <script>
+      var now = new Date().getTime();
+      var end = new Date("{{ value['end_datetime'] }}").getTime();
+      if (end > now) {
+        sayit.push(true);
+      } else {
+          sayit.push(false);
+      }
+    </script>
+  {% endif %}
+{% endfor %}
+
+<!-- once built, pass it to the javascript loop function to start timers. -->
+<script>
+  if (end_times.length > 0) {
+    for (var i=0;i < end_times.length; ++i) {
+      timers[i] = setInterval(innerTimer, 1000, end_times[i], "timer_" + ids[i], i, "#audio_" + ids[i], sayit[i]);
+    }
+  }
+</script>
+
+{% if scroll is not none %}
+<script type="application/javascript">
+
+const id = "{{ scroll }}";
+const yOffset = -138; 
+const element = document.getElementById(id);
+const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+window.scrollTo({top: y, behavior: 'smooth'});
+
+</script>
+{% endif %}
+
+{% endblock content %}
